@@ -2,14 +2,24 @@
 <head>
     <script type="text/javascript" src="codemirror.js"></script>
 
-    <script>
+    <script type="module">
+        const { EditorView } = CodeMirror["@codemirror/view"];
+        const { basicSetup } = CodeMirror["codemirror"];
+        const { EditorState } = CodeMirror["@codemirror/state"];
+        const { javascript, esLint } = CodeMirror["@codemirror/lang-javascript"];
+        const { lintGutter, linter } = CodeMirror["@codemirror/lint"];
+
+        import Linter from "https://cdn.skypack.dev/eslint4b-prebuilt@6.7.2";
+
         window.onload = () => {
-            new CodeMirror.EditorView({
-                state: CodeMirror.EditorState.create({
+            new EditorView({
+                state: EditorState.create({
                     doc: 'console.log("hello")',
                     extensions: [
-                        CodeMirror.basicSetup,
-                        CodeMirror.tagExtension(Symbol("language"), CodeMirror.javascript({typescript: true})),
+                        basicSetup,
+                        linter(esLint(new Linter())),
+                        lintGutter(),
+                        javascript({typescript: true}),
                     ]
                 }),
                 parent: document.querySelector("#editor")
